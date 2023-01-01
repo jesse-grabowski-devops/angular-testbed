@@ -10,42 +10,30 @@ import {
   RemovalPolicy
 } from "aws-cdk-lib";
 
-function getContextOrError(construct: Construct, key: string): string {
-  const value = construct.node.tryGetContext(key);
-  if (value == null) {
-    throw new Error(`Missing context value for ${key} -- See https://docs.aws.amazon.com/cdk/v2/guide/context.html#context_cli for more information`);
-  }
-  return value;
+export interface ApplicationConstructProps {
+    readonly removalPolicy: RemovalPolicy;
+    readonly domain: string;
 }
 
-class ApplicationInfrastructureConstruct extends Construct {
-  constructor(scope: Construct, id: string) {
+export class ApplicationConstruct extends Construct {
+  constructor(scope: Construct, id: string, props: ApplicationConstructProps) {
     super(scope, id);
-
-    // Cross-cutting setup
-    const removalPolicyName = getContextOrError(this, "removalPolicy");
-    const removalPolicy = (<any>RemovalPolicy)[removalPolicyName];
-    if (removalPolicy == null) {
-      throw new Error(`Invalid removal policy: ${removalPolicyName}`);
-    }
-
-    const domain = getContextOrError(this, "domain");
 
     // DNS
     const hostedZone = aws_route53.HostedZone.fromLookup(this, "hostedZone", {
-        domainName: domain
+        domainName: props.domain
     });
 
     // TLS
     const certificate = new aws_certificatemanager.Certificate(this, "certificate", {
-      domainName: domain,
+      domainName: props.domain,
       validation: cdk.aws_certificatemanager.CertificateValidation.fromDns(hostedZone)
     });
 
     // Origin storage
     const bucket = new aws_s3.Bucket(this, "staticContent", {
       encryption: cdk.aws_s3.BucketEncryption.S3_MANAGED,
-      removalPolicy: removalPolicy,
+      removalPolicy: props.removalPolicy,
       autoDeleteObjects: true,
       blockPublicAccess: cdk.aws_s3.BlockPublicAccess.BLOCK_ALL
     });
@@ -66,20 +54,19 @@ class ApplicationInfrastructureConstruct extends Construct {
         allowedMethods: cdk.aws_cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
         viewerProtocolPolicy: cdk.aws_cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
       },
-      domainNames: [domain],
+      domainNames: [props.domain],
       certificate: certificate,
       defaultRootObject: "index.html"
     });
     const aRecord = new aws_route53.ARecord(this, "aRecord", {
       zone: hostedZone,
-      recordName: domain,
+      recordName: props.domain,
       target: aws_route53.RecordTarget.fromAlias(new aws_route53_targets.CloudFrontTarget(distribution))
     });
     const aaaaRecord = new aws_route53.AaaaRecord(this, "aaaaRecord", {
       zone: hostedZone,
-      recordName: domain,
+      recordName: props.domain,
       target: cdk.aws_route53.RecordTarget.fromAlias(new aws_route53_targets.CloudFrontTarget(distribution))
     });
   }
 }
-export = ApplicationInfrastructureConstruct;
