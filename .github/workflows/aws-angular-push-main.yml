@@ -17,9 +17,11 @@ jobs:
         with:
           node-version: 'lts/*'
       - name: Install dependencies
+        working-directory: ./infrastructure
         run: npm ci
       - name: Release
+        working-directory: ./infrastructure
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: (cd infrastructure; npx semantic-release)
+        run: npx semantic-release
