@@ -121,7 +121,7 @@ dist
 cdk.out
 
 # Miscellaneous
-/.angular/cache
+**/.angular/cache
 .sass-cache/
 /connect.lock
 /coverage
