@@ -16,6 +16,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
+      - name: Build Infrastructure
+        working-directory: ./infrastructure
+        run: npm ci && npm run build
       - name: Install semantic-release
         run: npm install -g semantic-release
       - name: Release

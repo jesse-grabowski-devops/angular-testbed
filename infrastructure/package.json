@@ -1,10 +1,13 @@
 {
   "name": "@npm-jessegrabowski/angular-testbed-cdk",
-  "version": "0.1.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "version": "0.1.0",
   "scripts": {
-    "prepublishOnly": "tsc"
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk"
   },
   "devDependencies": {
     "@types/jest": "^29.2.4",
