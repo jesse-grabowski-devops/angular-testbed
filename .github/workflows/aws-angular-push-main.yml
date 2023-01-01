@@ -38,6 +38,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_ARTIFACTS_BUCKET: ${{ secrets.AWS_ARTIFACTS_BUCKET }}
+          AWS_DEFAULT_REGION: us-east-1
         run: |
           (cd dist/ && zip -r ../application-${VERSION}.zip .)
           aws s3 mv application-${VERSION}.zip $AWS_ARTIFACTS_BUCKET
