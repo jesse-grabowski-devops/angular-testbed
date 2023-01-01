@@ -26,4 +26,4 @@ jobs:
         working-directory: ./infrastructure
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npx semantic-release -- --branches main --plugins @semantic-release/npm
+        run: npx semantic-release --branches main --plugins @semantic-release/npm
