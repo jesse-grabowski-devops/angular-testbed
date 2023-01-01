@@ -42,4 +42,4 @@ jobs:
           AWS_DEFAULT_REGION: us-east-1
         run: |
           (cd dist/ && zip -r ../${REPOSITORY}-${VERSION}.zip .)
-          aws s3 mv application-${VERSION}.zip $AWS_ARTIFACTS_BUCKET
+          aws s3 mv ${REPOSITORY}-${VERSION}.zip $AWS_ARTIFACTS_BUCKET
