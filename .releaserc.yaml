@@ -1,6 +1,5 @@
 branches:
   - main
-access: public
 plugins:
   - '@semantic-release/commit-analyzer'
   - '@semantic-release/release-notes-generator'
